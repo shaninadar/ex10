@@ -5,11 +5,20 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Stock {
+	 
+private static final int BUY = 0;
+private static final int SELL = 1;
+private static final int REMOVE = 2;
+private static final int HOLD = 3;
 private String symbol;
 private float ask;
 private float bid;
-private Date date;
+ Date date;
+ private int recommendation;
+ private int stockQuantity;
+ 
 
+ 
 public Stock()
 {}
 
