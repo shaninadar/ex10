@@ -1,14 +1,16 @@
 package com.myorg.javacourse.service;
+
+
 import java.util.Date;
 
-import com.myorg.javacourse.Stock;
+import com.myorg.javacourse.model.Stock;
 import com.myorg.javacourse.model.Portfolio;
 
 public class PortfolioManager {
 	
 	
 	public Portfolio getPortfolio() {
-		Portfolio portfolio = new Portfolio(" ");
+		Portfolio portfolio = new Portfolio();
 		portfolio.setTitle("Exercise 5 - portfolio");
 		Date date1 = new Date();
 		date1.setYear(2014 - 1900);
@@ -24,7 +26,11 @@ public class PortfolioManager {
 		stock = new Stock("CAAS",(float) 32.2,(float) 31.5,date1);
 		portfolio.addStock(stock);
 		
-
 		return portfolio;
 	}
+	
+
+	
+	
+
 }
