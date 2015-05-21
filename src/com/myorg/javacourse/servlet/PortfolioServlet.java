@@ -19,16 +19,8 @@ public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOExc
 
 		PortfolioManager portfolioManager = new PortfolioManager();
 		Portfolio portfolio = portfolioManager.getPortfolio();
-		Portfolio portfolio2 = new Portfolio(portfolio);
-		portfolio2.setTitle("Portfolio #2");
 		resp.getWriter().println(portfolio.getHtmlString());
-		resp.getWriter().println(portfolio2.getHtmlString());
-		portfolio.removeStockAtIndex(0);
-		resp.getWriter().println(portfolio.getHtmlString());
-		resp.getWriter().println(portfolio2.getHtmlString());
-		portfolio2.getStocks()[2].setBid((float) 55.5);
-		resp.getWriter().println(portfolio.getHtmlString());
-		resp.getWriter().println(portfolio2.getHtmlString());
+		
 	
 }
 }

@@ -9,6 +9,7 @@ public class Stock {
 	private String symbol;
 	private float ask;
 	private float bid;
+	private int quantity;
 	private Date date;
 
 	 
@@ -18,15 +19,17 @@ public class Stock {
 		setSymbol("None");
 		setAsk(0);
 		setBid(0);
+		setQuantity(0);
 		date=new Date();
 	}
 	
-	public Stock(String symbol, float ask, float bid, Date date)
+	public Stock(String symbol, float ask, float bid, Date date,int quantity)
 	{
 		setSymbol(symbol);
 		setAsk(ask);
 		setBid(bid);
 		setDate(date);
+		setQuantity(quantity);
 	}
 	public Stock(Stock stock)
 	{
@@ -34,6 +37,7 @@ public class Stock {
 		setAsk(stock.getAsk());
 		setBid(stock.getBid());
 		setDate(stock.getDate());
+		setQuantity(stock.getQuantity());
 	}
 
 
@@ -74,16 +78,20 @@ public class Stock {
 		this.date = date;
 		
 	}
-
-	public  void remove () throws Throwable {
-	    
-		super.finalize();
+	public int getQuantity()
+	{
+		return quantity;
 	}
+	public void setQuantity(int quantity)
+	{
+		this.quantity = quantity;
+	}
+
 
 	public String getHtmlDescription()
 	{
 		DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
 		String dateStr = df.format(getDate());
-		String resultStr = new String("<b>Stock symbol</b>: "+this.getSymbol()+"  <b>Ask</b>: "+this.getAsk()+"  <b>Bid</b>: "+this.getBid()+"  <b>Date</b>: "+dateStr);
+		String resultStr = new String("<b>Stock symbol</b>: "+this.getSymbol()+"  <b>Ask</b>: "+this.getAsk()+"  <b>Bid</b>: "+this.getBid()+"  <b>Date</b>: "+dateStr+"<b>Stock Quantity</b>: "+this.getQuantity());
 		return resultStr;}
 }
