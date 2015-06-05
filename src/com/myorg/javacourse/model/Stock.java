@@ -1,16 +1,22 @@
 package com.myorg.javacourse.model;
 
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.sql.Date;
+
+import org.algo.model.StockInterface;
+import com.myorg.javacourse.model.Portfolio.ALGO_RECOMMENDATION;
 
 
-public class Stock {
+
+public class Stock implements StockInterface {
 	private String symbol;
 	private float ask;
 	private float bid;
 	private int quantity;
-	private Date date;
+	private transient java.util.Date date;
+	private com.myorg.javacourse.service.PortfolioManager.ALGO_RECOMMENDATION recommendation;
 
 	 
 	
@@ -19,8 +25,8 @@ public class Stock {
 		setSymbol("None");
 		setAsk(0);
 		setBid(0);
-		setQuantity(0);
-		date=new Date();
+		setStockQuantity(0);
+		date=new Date(0);
 	}
 	
 	public Stock(String symbol, float ask, float bid, Date date,int quantity)
@@ -28,16 +34,17 @@ public class Stock {
 		setSymbol(symbol);
 		setAsk(ask);
 		setBid(bid);
-		setDate(date);
-		setQuantity(quantity);
+		setStockQuantity(quantity);
+		this.date = date;
 	}
 	public Stock(Stock stock)
 	{
+		
 		setSymbol(stock.getSymbol());
 		setAsk(stock.getAsk());
 		setBid(stock.getBid());
-		setDate(stock.getDate());
-		setQuantity(stock.getQuantity());
+		setStockQuantity(stock.getStockQuantity());
+		this.date = new java.util.Date(stock.getDate().getTime());
 	}
 
 
@@ -67,24 +74,33 @@ public class Stock {
 	
 	
 	
-	public Date getDate() {
+	public java.util.Date getDate() {
 		return date;
 	}
 	
 
 	
-	public  void setDate(Date date)
-	{
+	public void setDate(java.util.Date date) {
 		this.date = date;
-		
 	}
-	public int getQuantity()
+	public void setDate(long time) {
+		this.date = new Date(time * 1000);
+	}
+	public int getStockQuantity()
 	{
 		return quantity;
 	}
-	public void setQuantity(int quantity)
+	public void setStockQuantity(int quantity)
 	{
 		this.quantity = quantity;
+	}
+	
+	public com.myorg.javacourse.service.PortfolioManager.ALGO_RECOMMENDATION getRecommendation() {
+		return recommendation;
+	}
+
+	public void setRecommendation(com.myorg.javacourse.service.PortfolioManager.ALGO_RECOMMENDATION algo_RECOMMENDATION) {
+		this.recommendation = algo_RECOMMENDATION;
 	}
 
 
@@ -92,6 +108,7 @@ public class Stock {
 	{
 		DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
 		String dateStr = df.format(getDate());
-		String resultStr = new String("<b>Stock symbol</b>: "+this.getSymbol()+"  <b>Ask</b>: "+this.getAsk()+"  <b>Bid</b>: "+this.getBid()+"  <b>Date</b>: "+dateStr+"<b>Stock Quantity</b>: "+this.getQuantity());
+		String resultStr = new String("<b>Stock symbol</b>: "+this.getSymbol()+"  <b>Ask</b>: "+this.getAsk()+"  <b>Bid</b>: "+this.getBid()+"  <b>Date</b>: "+dateStr+"<b>Stock Quantity</b>: "+this.getStockQuantity());
 		return resultStr;}
 }
+

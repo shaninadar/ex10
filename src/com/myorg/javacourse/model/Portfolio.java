@@ -1,14 +1,18 @@
 package com.myorg.javacourse.model;
 import com.myorg.javacourse.model.Stock;
 
-public class Portfolio {
+import org.algo.model.PortfolioInterface;
+import org.algo.model.StockInterface;
+
+
+public class Portfolio implements PortfolioInterface {
 	private static final int MAX_PORTFOLIO_SIZE = 5;
 	private String title;
 	private Stock[] stocks = new Stock[MAX_PORTFOLIO_SIZE];
 	private int portfolioSize = 0;
 	private float balance=0;
 	
-	public  enum ALGO_RECOMMENDATION {BUY, SELL, REMOVE, HOLD};
+	public enum ALGO_RECOMMENDATION {BUY, SELL, REMOVE, HOLD}
 	
 	
 	
@@ -18,6 +22,13 @@ public class Portfolio {
 		this.balance=0;
 		this.setTitle("portfolio");
 		stocks=new Stock[MAX_PORTFOLIO_SIZE];
+	}
+	
+	public Portfolio(Stock[] stockArray) {
+		this.title = new String();
+		this.portfolioSize = getPortfolioSize();
+		this.balance = getBalance();
+		this.stocks = stockArray;
 	}
 	
 		
@@ -33,11 +44,12 @@ public class Portfolio {
 	{
 		this();
 		setTitle(portfolio.getTitle());
-		setStockSize(portfolio.getStockSize());
+		setStockSize(portfolio.getPortfolioSize());
 		setBalance(portfolio.getBalance());
 
 		for(int i=0; i<portfolioSize; i++)
-			stocks[i]= new Stock(portfolio.getStocks()[i]);
+			stocks[i]= new Stock(new Stock(portfolio.stocks[i]));
+	
 		
 	
 		
@@ -98,17 +110,17 @@ public class Portfolio {
 			if(symbol.equals(stocks[i].getSymbol()))
 			{
 				if(quantity == -1) {
-					float NewAmount=stocks[i].getQuantity()*stocks[i].getBid();
+					float NewAmount=stocks[i].getStockQuantity()*stocks[i].getBid();
 					updateBalance(NewAmount);
-					stocks[i].setQuantity(0);
+					stocks[i].setStockQuantity(0);
 					return true;
 				}
-				else if(stocks[i].getQuantity()-quantity < 0){
+				else if(stocks[i].getStockQuantity()-quantity < 0){
 					System.out.println("Not enough stocks to sell");
 					return false;
 				}
-				else if (stocks[i].getQuantity()-quantity >= 0){
-					stocks[i].setQuantity(stocks[i].getQuantity()-quantity);
+				else if (stocks[i].getStockQuantity()-quantity >= 0){
+					stocks[i].setStockQuantity(stocks[i].getStockQuantity()-quantity);
 					float amount = quantity*stocks[i].getBid();
 					updateBalance(amount);
 					return true;
@@ -137,7 +149,7 @@ public class Portfolio {
 					}
 					else
 					{
-					stocks[i].setQuantity(stocks[i].getQuantity()+ (int)(balance/stocks[i].getAsk()));
+					stocks[i].setStockQuantity(stocks[i].getStockQuantity()+ (int)(balance/stocks[i].getAsk()));
 					updateBalance(spent);
 					return true;
 					}
@@ -152,7 +164,7 @@ public class Portfolio {
 					}
 					else
 					{
-					stocks[i].setQuantity(stocks[i].getQuantity()+quantity);
+					stocks[i].setStockQuantity(stocks[i].getStockQuantity()+quantity);
 					updateBalance(spent1);
 					return true;
 					}
@@ -194,15 +206,17 @@ public class Portfolio {
 		{
 			float sum =0;
 			for(int i =0; i<portfolioSize; i++)
-				sum+=stocks[i].getQuantity() * stocks[i].getBid();
+				sum+=stocks[i].getStockQuantity() * stocks[i].getAsk();
 
 			return  sum;
 		}
+
 		
 		public float getTotalValue()
 		{
 			return getBalance() + getStocksValue();
 		}
+	
 		
 	public String getTitle() {
 		return title;
@@ -211,11 +225,11 @@ public class Portfolio {
 	public void setTitle(String title) {
 		this.title = title;
 	}
-	public Stock[] getStocks() {
-		return stocks;
+
+	public StockInterface[] getStocks() {
+		return (StockInterface[]) stocks;
 	}
 	
-	//setter
 	public void setStocks(Stock[] stocks) {
 		this.stocks = stocks;
 	}
@@ -223,8 +237,12 @@ public class Portfolio {
 	public void setStockSize(int stockIndex) {
 		this.portfolioSize = stockIndex;
 	}
-	public int getStockSize() {
+	public int getPortfolioSize() {
 		return portfolioSize;
+	}
+	
+	public static int getMaxSize() {
+		return MAX_PORTFOLIO_SIZE;
 	}
 	public void setBalance(float balance) {
 		this.balance = balance;
@@ -232,6 +250,17 @@ public class Portfolio {
 	public float getBalance() {
 		return balance;
 	}
+	
+public StockInterface findStock(String symbol) {
+		
+		for (int i = 0; i < getPortfolioSize(); i++) {
+			if (stocks[i].getSymbol().equals(symbol)) 
+					return this.stocks[i];
+		}
+		return null;
+		}
+	
+
 
 
 
