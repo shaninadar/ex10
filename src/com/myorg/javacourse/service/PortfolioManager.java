@@ -1,8 +1,10 @@
 package com.myorg.javacourse.service;
 
 
-
-
+import com.myorg.javacourse.exception.BalanceException;
+import com.myorg.javacourse.exception.PortfolioFullException;
+import com.myorg.javacourse.exception.StockAlreadyExistsException;
+import com.myorg.javacourse.exception.StockNotExistException;
 import com.myorg.javacourse.model.Stock;
 import com.myorg.javacourse.model.Portfolio;
 
@@ -125,9 +127,12 @@ public class PortfolioManager implements PortfolioManagerInterface {
 
 	/**
 	 * Add stock to portfolio 
+	 * @throws StockNotExistException 
+	 * @throws StockAlreadyExistsException 
+	 * @throws PortfolioFullException 
 	 */
 	@Override
-	public void addStock(String symbol) {
+	public void addStock(String symbol) throws PortfolioFullException, StockAlreadyExistsException, StockNotExistException {
 		Portfolio portfolio = (Portfolio) getPortfolio();
 
 		try {
@@ -308,16 +313,24 @@ public class PortfolioManager implements PortfolioManagerInterface {
 	}
 
 	@Override
-	public void removeStock(String symbol) throws PortfolioException {
+	public void removeStock(String symbol) throws StockNotExistException, BalanceException {
 		Portfolio portfolio = (Portfolio) getPortfolio();
-		portfolio.removeStock(symbol);
+		try {
+			portfolio.removeStock(symbol);
+		
+		} catch (StockNotExistException e) {
+			e.getMessage();
+			e.printStackTrace();
+			throw e;
+		}
 		flush(portfolio);
+	}
 		
 	}	
 	
 
 	
-}
+
 
 
 

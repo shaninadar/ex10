@@ -1,5 +1,5 @@
 package com.myorg.javacourse.model;
-import com.myorg.javacourse.model.Stock;
+import com.myorg.javacourse.exception.*;
 
 import org.algo.model.PortfolioInterface;
 import org.algo.model.StockInterface;
@@ -56,55 +56,84 @@ public class Portfolio implements PortfolioInterface {
 	}
 	
 	
-	public void addStock(Stock stock) {
+	public void addStock(Stock stock) throws PortfolioFullException,StockAlreadyExistsException, StockNotExistException{
 			
-				if(stock != null && portfolioSize < MAX_PORTFOLIO_SIZE ) 
-				{
-				this.stocks[portfolioSize] = stock;
-			
-				portfolioSize++;
-				}else {
-				System.out.println("Can’t add new stock, portfolio can have only" +MAX_PORTFOLIO_SIZE+"stocks");
-				}
-				
-	
-		
-			
-	}
-	
-	public void removeStock(String symbol) 
-	{
-		Stock[] newStocks= new Stock[MAX_PORTFOLIO_SIZE];
-		int j=0;
-		sellStock(symbol,-1) ;
-		for (int i =0; i<portfolioSize ;i++)
-		{
-		
-			if(symbol.equals(stocks[i].getSymbol())==false )
-			{
-				newStocks[j]=stocks[i];
-				j++;
-			}
-			
+		if (this.portfolioSize == MAX_PORTFOLIO_SIZE) {
+			throw new PortfolioFullException();
 		}
-		stocks=newStocks;
-		portfolioSize--;
+		if (stock == null) {
+			throw new StockNotExistException("Check input validance!");
+		}
+		for (int i = 0; i < this.portfolioSize; i++) {
+			if (stock.getSymbol().equals(stocks[i].getSymbol())) {
+				throw new StockAlreadyExistsException(
+						"You already own that stock!");
+			}
+		}
+		if (this.portfolioSize < MAX_PORTFOLIO_SIZE) {
+			stocks[this.portfolioSize] = stock;
+			((Stock) stocks[this.portfolioSize]).setStockQuantity(0);
+																	
+																
+			this.portfolioSize++;
+		}
+	}
+	
+	
 		
+			
+	
+	
+	
+		public void removeStock(String symbol) throws StockNotExistException, BalanceException
+		 {
+	boolean StillRun = true;
+	if (symbol == null) { 
+							
+		throw new StockNotExistException("invalid input, please try again");
 	}
+	if (portfolioSize == 1
+			|| symbol.equals(stocks[portfolioSize - 1].getSymbol())) {
+		
+		
+		this.sellStock(stocks[portfolioSize - 1].getSymbol(), -1);
+
+		stocks[portfolioSize - 1] = null;
+		portfolioSize--;
+		// operation succeed
+	}
+	for (int i = 0; i < portfolioSize && StillRun; i++) { 
+		if (symbol.equals(stocks[i].getSymbol())) {
+			this.sellStock(stocks[portfolioSize - 1].getSymbol(), -1);
+			stocks[i] = stocks[portfolioSize - 1];
+			stocks[portfolioSize - 1] = null;
+			portfolioSize--;
+			StillRun = false; 
+		}
+	}
+	if (StillRun == true){
+		throw new StockNotExistException();
+	}
+}
+
+	
+	public void updateBalance(float amount) throws BalanceException {
+		float temp = this.balance + amount;
+		if (temp < 0) {
+			throw new BalanceException();
+		} else {
+			this.balance = temp;
+			System.out.println("Balance updated!");
+		}
+	}
+	
 	
 
 	
-	public void updateBalance(float amount)
-	{
-		balance+=amount;
-	}
 	
+	public boolean sellStock(String symbol,int quantity) throws StockNotExistException, BalanceException
+	 {
 	
-
-	
-	
-	public boolean sellStock(String symbol,int quantity) 
-	{
 
 		for(int i=0; i<portfolioSize; i++)
 			if(symbol.equals(stocks[i].getSymbol()))
@@ -116,8 +145,7 @@ public class Portfolio implements PortfolioInterface {
 					return true;
 				}
 				else if(stocks[i].getStockQuantity()-quantity < 0){
-					System.out.println("Not enough stocks to sell");
-					return false;
+					throw new StockNotExistException();
 				}
 				else if (stocks[i].getStockQuantity()-quantity >= 0){
 					stocks[i].setStockQuantity(stocks[i].getStockQuantity()-quantity);
@@ -126,13 +154,15 @@ public class Portfolio implements PortfolioInterface {
 					return true;
 					
 				}
+				else
+					throw new StockNotExistException(symbol);
 			}
 	
 		
 		return false;
 	}
 	
-	public boolean buyStock(Stock stock, int quantity )
+	public boolean buyStock(Stock stock, int quantity )throws StockNotExistException, BalanceException, PortfolioFullException, StockAlreadyExistsException
 	{
 
 		for(int i=0; i<portfolioSize; i++)
@@ -144,8 +174,7 @@ public class Portfolio implements PortfolioInterface {
 					float spent = ((int)(balance/stocks[i].getAsk()) *stocks[i].getAsk())/(-1); 
 					if (spent/(-1) > balance)
 					{
-						System.out.println(" Not enough balance to complete purchase.");
-					return false;
+						throw new BalanceException();
 					}
 					else
 					{
@@ -170,11 +199,13 @@ public class Portfolio implements PortfolioInterface {
 					}
 				}
 			}
+			else
+			throw new StockNotExistException();
 		
 			
 		}
 		
-			System.out.println("The stock is not exists");
+			
 			addStock(stock);
 			return true;
 	
